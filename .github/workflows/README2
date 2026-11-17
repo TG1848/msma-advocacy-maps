@@ -1,0 +1,30 @@
+Pages
+  index.html        Home: find your legislators, 2026 results, how to read the map, how the legislature works
+  map.html          Interactive House & Senate map (with PDF handouts)
+  roster.html       Searchable, sortable member roster
+  leadership.html   Senate and House leadership
+
+Supporting files (keep them in the same folders)
+  assets/           logo, styles, scripts, member data (legislators.js)
+  geo-*.json        district and county boundaries used by the map
+  assets/MSMA-Legislator-Contact-Directory-2027.xlsx  downloadable contact directory (linked from the Home page)
+
+PUT IT ONLINE (free, about 2 minutes)
+  1. Unzip this folder.
+  2. Go to https://app.netlify.com/drop
+  3. Drag the whole unzipped "msma-site" folder onto the page.
+  4. Netlify gives you a random web address right away. Click "Claim" / sign up
+     (free) so the site isn't deleted after an hour.
+  5. To get msma-advocacy-maps.netlify.app: in Netlify open the site, go to
+     Site configuration > General > Site details > Change site name, and enter
+     msma-advocacy-maps. (If that name is taken, try msma-advocacymaps.)
+
+Other free hosts that work the same way: GitHub Pages, Cloudflare Pages.
+
+Note: the pages must be opened from a web address. Double-clicking index.html on
+your computer will show the pages, but the interactive map needs to be online
+(or served by a local web server) to load its boundary files.
+
+Updating members later
+  Member names, party, (I)/(N) status, leadership and counties are all in
+  assets/legislators.js. Edit it and re-upload the folder.
