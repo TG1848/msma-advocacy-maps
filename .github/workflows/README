@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start here: put MSMA Advocacy Maps on GitHub</title>
+<style>
+:root{--navy:#1f3468;--ink:#16243d;--muted:#55627a;--line:#dde3ec;--gold:#f2b400}
+*{box-sizing:border-box}body{margin:0;background:#f6f8fb;color:var(--ink);font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{background:var(--navy);color:#fff;padding:36px 24px}header .w{max-width:860px;margin:auto}header h1{margin:0 0 8px;font-size:34px;letter-spacing:-.5px}header p{margin:0;color:#dbe3f2;font-size:18px}
+main{max-width:860px;margin:auto;padding:28px 24px 60px}
+.summary{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:28px}
+.summary ul{margin:8px 0 0;padding-left:20px}
+.step{background:#fff;border:1px solid var(--line);border-left:8px solid var(--navy);border-radius:12px;padding:20px 24px;margin:0 0 18px}
+.step h2{margin:0 0 4px;font-size:22px;color:var(--navy)}.step .time{color:var(--muted);font-size:14px;font-weight:600;margin-bottom:10px}
+.step ol{margin:8px 0 0;padding-left:22px}.step li{margin-bottom:8px}
+.opt{border-left-color:var(--gold)}
+b.ui{background:#eef2f8;border:1px solid #cdd6e4;border-radius:5px;padding:1px 7px;font-weight:700;white-space:nowrap}
+code{background:#fff4d6;border:1px solid #e3c06b;border-radius:5px;padding:1px 6px;font-size:15px;word-break:break-all}
+.tip{background:#eef6f0;border:1px solid #b9d9c3;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:15px}
+.warn{background:#fff7e6;border:1px solid #f0cf86;border-radius:8px;padding:10px 14px;margin-top:10px;font-size:15px}
+h3{color:var(--navy);margin:34px 0 10px}table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:15px}td,th{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#f0f3f8;font-size:13px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.check{list-style:none;padding:0}.check li:before{content:"☐ ";color:var(--navy);font-weight:700}
+</style></head><body>
+<header><div class="w"><h1>Put MSMA Advocacy Maps on GitHub</h1><p>About 20–30 minutes, once. After that the website updates itself every night. No coding needed.</p></div></header>
+<main>
+
+<div class="summary"><strong>What you'll end up with</strong>
+<ul>
+<li>The full MSMA Advocacy Maps website at a free address like <code>https://msma-advocacy.github.io/msma-advocacy-maps/</code>, with the Home page, Interactive Map, Member Roster, Leadership, a new Committees page, and the contact directory download.</li>
+<li>Every night, GitHub checks the official Missouri House and Senate data and updates each legislator's <strong>Capitol office, phone, email, committee assignments and filed bills</strong>, plus the downloadable Excel directory.</li>
+<li>Cost: <strong>$0</strong>. Public GitHub repositories, GitHub Actions (the nightly update) and GitHub Pages (the website) are free.</li>
+</ul></div>
+
+<div class="step"><h2>1. Create a free GitHub account</h2><div class="time">5 minutes</div>
+<ol>
+<li>Go to <code>https://github.com/signup</code> and sign up with your MSMA email.</li>
+<li>Pick a username. It becomes part of the web address, so something like <code>msma-advocacy</code> works well.</li>
+</ol>
+<div class="tip"><strong>Tip for MSMA:</strong> If you'd like the site to belong to MSMA rather than one person, create a free <em>organization</em> after signing up (click your profile picture → <b class="ui">Your organizations</b> → <b class="ui">New organization</b> → <b class="ui">Free</b>) and do the next steps inside it. Then others at MSMA can be added later.</div>
+</div>
+
+<div class="step"><h2>2. Make a new repository (the folder that holds the site)</h2><div class="time">2 minutes</div>
+<ol>
+<li>Click the <b class="ui">+</b> in the top-right corner → <b class="ui">New repository</b>.</li>
+<li>Repository name: <code>msma-advocacy-maps</code></li>
+<li>Choose <b class="ui">Public</b>. (Everything in it is already public information. Public keeps the nightly updates free.)</li>
+<li>Leave the other boxes unchecked and click <b class="ui">Create repository</b>.</li>
+</ol></div>
+
+<div class="step"><h2>3. Upload the website files</h2><div class="time">5 minutes</div>
+<ol>
+<li>Unzip <strong>MSMA-Advocacy-Maps-GitHub.zip</strong> on your computer. Open the unzipped folder: you'll see <strong>site</strong>, <strong>updater</strong>, <strong>README.md</strong> and this guide.</li>
+<li>On the new repository page, click the link <b class="ui">uploading an existing file</b>.</li>
+<li>Select <strong>site</strong>, <strong>updater</strong> and <strong>README.md</strong> together and drag them onto the GitHub page. Wait until every file shows in the list (about 22 files).</li>
+<li>Scroll down and click <b class="ui">Commit changes</b>.</li>
+</ol>
+<div class="warn">Drag the folders themselves (not just the files inside them), so GitHub keeps the <strong>site/</strong> and <strong>updater/</strong> folders.</div></div>
+
+<div class="step"><h2>4. Add the nightly-update instructions</h2><div class="time">3 minutes</div>
+<p style="margin:0">This file tells GitHub to update and publish the site every night. Computers hide its folder name (it starts with a dot), so it's easiest to create it on GitHub directly:</p>
+<ol>
+<li>In the repository, click <b class="ui">Add file</b> → <b class="ui">Create new file</b>.</li>
+<li>In the name box, type exactly: <code>.github/workflows/update-and-publish.yml</code> (GitHub turns each <code>/</code> into a folder as you type.)</li>
+<li>On your computer, open <strong>updater/update-and-publish.yml</strong> with Notepad (Windows) or TextEdit (Mac), select all, copy, and paste it into the big box on GitHub.</li>
+<li>Click <b class="ui">Commit changes…</b> → <b class="ui">Commit changes</b>.</li>
+</ol>
+<div class="tip">If you already see a <strong>.github</strong> folder in your repository (some computers upload it in step 3), skip this step.</div></div>
+
+<div class="step"><h2>5. Turn on the website</h2><div class="time">1 minute</div>
+<ol>
+<li>Click <b class="ui">Settings</b> (top of the repository) → <b class="ui">Pages</b> (left side).</li>
+<li>Under <strong>Build and deployment → Source</strong>, choose <b class="ui">GitHub Actions</b>.</li>
+</ol></div>
+
+<div class="step opt"><h2>6. (Recommended) Turn on Senate details</h2><div class="time">5 minutes</div>
+<p style="margin:0">House details come straight from the Missouri House's official data files and need nothing extra. The Senate doesn't publish those files, so Senate office, committee and bill details come from <strong>Open States</strong> (run by Plural), which collects them from senate.mo.gov. It needs a free key:</p>
+<ol>
+<li>Go to <code>https://open.pluralpolicy.com</code>, create a free account, and request an API key on your account profile page.</li>
+<li>Back on GitHub: <b class="ui">Settings</b> → <b class="ui">Secrets and variables</b> → <b class="ui">Actions</b> → <b class="ui">New repository secret</b>.</li>
+<li>Name: <code>OPENSTATES_API_KEY</code>. Secret: paste your key. Click <b class="ui">Add secret</b>.</li>
+</ol>
+<div class="tip">Skip this and the site still works: senators' cards will show the "Contact office" link to their official Senate page instead of filled-in details.</div></div>
+
+<div class="step"><h2>7. Run it the first time</h2><div class="time">3 minutes</div>
+<ol>
+<li>Click the <b class="ui">Actions</b> tab. If GitHub asks, click <b class="ui">I understand my workflows, go ahead and enable them</b>.</li>
+<li>Click <b class="ui">Update member info and publish site</b> on the left → <b class="ui">Run workflow</b> → <b class="ui">Run workflow</b>.</li>
+<li>Wait 2–3 minutes for a green check mark.</li>
+<li>Go to <b class="ui">Settings</b> → <b class="ui">Pages</b>. Your site's address is shown at the top. <strong>That's the link to share.</strong></li>
+</ol>
+<div class="tip">From now on it runs by itself every night (around 4–5 AM Central) and whenever you change a file.</div></div>
+
+<h3>What to expect over the next few weeks</h3>
+<table><tr><th>When</th><th>What appears on the site</th></tr>
+<tr><td>Now through November</td><td>Members, parties, (I)/(N), leadership and counties. Office/committee/bill sections say the details will appear once published.</td></tr>
+<tr><td>Starting December 1, 2026</td><td>Bills prefiled by returning members appear on their cards and in the roster.</td></tr>
+<tr><td>January 2027 (session opens)</td><td>New members are sworn in, the official records switch over, and offices, phone numbers, emails and committee assignments fill in for everyone. The Committees page fills in.</td></tr>
+<tr><td>During session</td><td>New bills and committee changes show up the next morning.</td></tr></table>
+<p style="font-size:15px;color:var(--muted)">Built-in safety rule: the updater only attaches information when the official record's last name matches the member on MSMA's roster. Until January, official records still list outgoing legislators, so those districts simply wait rather than showing the wrong person's details.</p>
+
+<h3>Good to know</h3>
+<table>
+<tr><th>If you want to…</th><th>Do this</th></tr>
+<tr><td>Check it's still updating</td><td>Look at the bottom of any page: "Checked against official sources [date]". Or open the <b class="ui">Actions</b> tab and look for green check marks.</td></tr>
+<tr><td>Fix a member's name, leadership role or county list</td><td>Open <code>site/assets/legislators.js</code> on GitHub → pencil icon → edit the text between the quotes → <b class="ui">Commit changes</b>. The site republishes in about 2 minutes. (Or send the change to whoever helps you with the site.)</td></tr>
+<tr><td>Know if something breaks</td><td>GitHub emails the account owner when a nightly run fails. If a source is down, the site keeps the last good information and tries again the next night.</td></tr>
+<tr><td>Use an MSMA address like maps.msma.org</td><td>Settings → Pages → <b class="ui">Custom domain</b>, then ask MSMA's IT/website contact to add the DNS record GitHub shows.</td></tr>
+<tr><td>Pause the nightly updates</td><td>Actions tab → the workflow → <b class="ui">…</b> → <b class="ui">Disable workflow</b>. The site stays online.</td></tr>
+</table>
+
+<h3>Quick checklist</h3>
+<ul class="check"><li>GitHub account (or MSMA organization) created</li><li>Repository <code>msma-advocacy-maps</code> created as Public</li><li>site, updater and README.md uploaded</li><li><code>.github/workflows/update-and-publish.yml</code> created</li><li>Settings → Pages → Source set to GitHub Actions</li><li>(Recommended) OPENSTATES_API_KEY secret added</li><li>Workflow run once with a green check, and site address copied</li></ul>
+<p style="margin-top:30px;color:var(--muted);font-size:15px">Questions about the site's content: advocacy@msma.org</p>
+</main></body></html>
