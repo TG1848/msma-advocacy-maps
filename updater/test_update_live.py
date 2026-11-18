@@ -107,6 +107,19 @@ def run():
     row = next(r for r in ws.iter_rows(min_row=5, values_only=True) if r[0] == 134)
     assert row[7] == "573-751-0000" and "Rules - Administrative Oversight (Chair)" in row[9] and row[10] == 2
 
+    # House returns a web page instead of XML -> clear error that shows what was sent
+    def html_page(url, headers=None, timeout=45):
+        if "documents.house.mo.gov" in url:
+            return b"<!DOCTYPE html><html><head><title>Access Denied</title></head><body>blocked</body></html>"
+        return fake_fetch(url, headers, timeout)
+    U.fetch = html_page
+    U.main()
+    st = json.loads(U.STATUS_JSON.read_text())
+    assert st["house"]["ok"] is False and "Access Denied" in st["house"]["error"], st["house"]
+    assert json.loads(U.LIVE_JSON.read_text())["house"]["134"]["bills"], "data kept"
+    U.fetch = fake_fetch
+    assert U.house_session_codes() == ["271", "261"]
+
     # Second run: House source down -> previous House data must be kept, status shows the error
     def broken(url, headers=None, timeout=45):
         if "house.mo.gov" in url:

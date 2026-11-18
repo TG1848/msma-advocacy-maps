@@ -56,7 +56,7 @@ HOUSE_MEMBERLIST_CANDIDATES = [  # tried after link discovery on the index page
     "https://documents.house.mo.gov/xml/MemberList.xml",
     "https://documents.house.mo.gov/MemberList.xml",
 ]
-USER_AGENT = "MSMA-Advocacy-Maps-updater/1.0 (+advocacy@msma.org)"
+USER_AGENT = "Mozilla/5.0 (compatible; MSMA-Advocacy-Maps/1.0; +mailto:advocacy@msma.org)"
 PAUSE = float(os.environ.get("REQUEST_PAUSE", "0.6"))  # be polite to state servers
 
 
@@ -159,27 +159,45 @@ def senate_member_url(district: int) -> str:
 
 
 # ------------------------------------------------------------------- House
-def find_house_memberlist() -> str:
-    reason = ""
+def house_session_codes() -> list[str]:
+    """House file prefixes: 2027 regular session -> '271', 2026 -> '261' (newest first)."""
+    y = int(SESSION_YEAR)
+    return [f"{str(y)[2:]}1", f"{str(y - 1)[2:]}1"]
+
+
+def parse_xml(data: bytes, what: str):
+    """Parse XML; on failure say what the server actually sent (first characters)."""
+    try:
+        return ET.fromstring(data)
+    except ET.ParseError as e:
+        snippet = re.sub(r"\s+", " ", data[:160].decode("utf-8", "replace"))
+        raise RuntimeError(f"{what} was not valid XML ({e}); server sent: {snippet!r}")
+
+
+def find_house_memberlist() -> list[str]:
+    """Candidate MemberList URLs, newest session first."""
+    urls = []
     try:
         page = fetch(HOUSE_XML_INDEX).decode("utf-8", "replace")
-        for href in re.findall(r'href=["\']([^"\']+\.xml)["\']', page, re.I):
-            if "memberlist" in href.lower():
-                return urllib.parse.urljoin(HOUSE_XML_INDEX, href)
+        found = [urllib.parse.urljoin(HOUSE_XML_INDEX, h)
+                 for h in re.findall(r'href=["\']([^"\']+\.xml)["\']', page, re.I) if "memberlist" in h.lower()]
+        found.sort(key=lambda u: int((re.search(r"/(\d{3})-", u) or [0, 0])[1]), reverse=True)
+        urls += found
     except Exception as e:
-        reason = str(e)
         log("  (could not read House XML index page:", e, ")")
-    for url in HOUSE_MEMBERLIST_CANDIDATES:
-        try:
-            fetch(url)
-            return url
-        except Exception:
-            continue
-    raise RuntimeError("Could not locate the House MemberList.xml file" + (f" ({reason})" if reason else ""))
+    for code in house_session_codes():
+        urls.append(f"https://documents.house.mo.gov/xml/{code}-MemberList.XML")
+    urls += HOUSE_MEMBERLIST_CANDIDATES
+    seen, out = set(), []
+    for u in urls:
+        if u.lower() not in seen:
+            seen.add(u.lower())
+            out.append(u)
+    return out
 
 
 def parse_house_member(xml_bytes: bytes) -> dict:
-    root = ET.fromstring(xml_bytes)
+    root = parse_xml(xml_bytes, "member file")
     info = next((e for e in root.iter() if local(e.tag) == "RepresentativeInfo"), root)
     committees = []
     for c in children(info, "Committee"):
@@ -213,26 +231,39 @@ def parse_house_member(xml_bytes: bytes) -> dict:
 
 
 def update_house(roster: dict) -> tuple[dict, dict]:
-    url = find_house_memberlist()
-    log("House member list:", url)
-    root = ET.fromstring(fetch(url))
-    links = {}
-    for item in root.iter():
-        if local(item.tag) == "RepresentativeXML":
-            d, link = child_text(item, "RepresentativeDistrict"), child_text(item, "RepresentativeXMLLink")
-            if d.isdigit() and link:
-                links[int(d)] = urllib.parse.urljoin(url, link)
+    links, used, problems = {}, None, []
+    for url in find_house_memberlist():
+        try:
+            data = fetch(url)
+            root = parse_xml(data, url.rsplit("/", 1)[-1])
+        except Exception as e:
+            problems.append(str(e)[:260])
+            continue
+        for item in root.iter():
+            if local(item.tag) == "RepresentativeXML":
+                d, link = child_text(item, "RepresentativeDistrict"), child_text(item, "RepresentativeXMLLink")
+                if d.isdigit() and link:
+                    links[int(d)] = urllib.parse.urljoin(url, link)
+        if links:
+            used = url
+            break
+        snippet = re.sub(r"\s+", " ", data[:160].decode("utf-8", "replace"))
+        problems.append(f"{url.rsplit('/', 1)[-1]} had no member entries; server sent: {snippet!r}")
     if not links:
-        raise RuntimeError("House MemberList.xml had no RepresentativeXML entries")
-    out, waiting = {}, []
+        raise RuntimeError("No usable House member list. " + " | ".join(problems[-3:]))
+    log("House member list:", used)
+    out, waiting, failed, first_error = {}, [], [], ""
     for district in sorted(links):
         member = roster["house"].get(str(district))
         if not member:
             continue
         try:
             rec = parse_house_member(fetch(links[district]))
+            rec_source = links[district]
         except Exception as e:
             log(f"  House {district}: {e}")
+            failed.append(district)
+            first_error = first_error or str(e)[:260]
             continue
         if not same_person(member["name"], rec["last_name"], rec["official_name"]):
             waiting.append(district)
@@ -241,7 +272,12 @@ def update_house(roster: dict) -> tuple[dict, dict]:
         rec["page"] = house_member_url(district)
         out[str(district)] = rec
     log(f"  House: {len(out)} matched, {len(waiting)} waiting for new-member records")
-    return out, {"matched": len(out), "waiting": waiting}
+    info = {"matched": len(out), "waiting": waiting, "source": used}
+    if failed:
+        info.update(unreadable=failed, first_error=first_error)
+    if not out and failed and len(failed) == len([d for d in links if str(d) in roster["house"]]):
+        raise RuntimeError("Every House member file was unreadable: " + first_error)
+    return out, info
 
 
 # ------------------------------------------------------------------ Senate
