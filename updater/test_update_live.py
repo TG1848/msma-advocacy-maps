@@ -119,6 +119,8 @@ def run():
     assert json.loads(U.LIVE_JSON.read_text())["house"]["134"]["bills"], "data kept"
     U.fetch = fake_fetch
     assert U.house_session_codes() == ["271", "261"]
+    assert U.session_year_of("https://documents.house.mo.gov/xml/261-MemberList.XML") == "2026"
+    assert U.session_year_of("https://documents.house.mo.gov/xml/271-134.xml") == "2027"
 
     # Second run: House source down -> previous House data must be kept, status shows the error
     def broken(url, headers=None, timeout=45):

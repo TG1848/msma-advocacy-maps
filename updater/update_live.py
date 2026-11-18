@@ -145,9 +145,14 @@ def children(el, name: str):
     return [c for c in el.iter() if local(c.tag) == name]
 
 
-def house_bill_url(bill_type: str, number: str) -> str:
+def house_bill_url(bill_type: str, number: str, year: str = "") -> str:
     code = f"{bill_type}{number}".replace(" ", "")
-    return f"https://house.mo.gov/Bill.aspx?bill={urllib.parse.quote(code)}&year={SESSION_YEAR}&code=R"
+    return f"https://house.mo.gov/Bill.aspx?bill={urllib.parse.quote(code)}&year={year or SESSION_YEAR}&code=R"
+
+
+def session_year_of(url: str) -> str:
+    m = re.search(r"/(\d{2})\d-", url or "")
+    return f"20{m.group(1)}" if m else SESSION_YEAR
 
 
 def house_member_url(district: int) -> str:
@@ -176,7 +181,7 @@ def parse_xml(data: bytes, what: str):
 
 def find_house_memberlist() -> list[str]:
     """Candidate MemberList URLs, newest session first."""
-    urls = []
+    urls = [f"https://documents.house.mo.gov/xml/{house_session_codes()[0]}-MemberList.XML"]
     try:
         page = fetch(HOUSE_XML_INDEX).decode("utf-8", "replace")
         found = [urllib.parse.urljoin(HOUSE_XML_INDEX, h)
@@ -270,6 +275,14 @@ def update_house(roster: dict) -> tuple[dict, dict]:
             continue
         rec.pop("last_name", None)
         rec["page"] = house_member_url(district)
+        file_year = session_year_of(used)
+        if file_year != SESSION_YEAR:
+            # Previous session's file: contact details are still right, but its committees and
+            # bills belong to the old session, so leave those empty until the new files appear.
+            rec.update(committees=[], bills=[], cosponsored=0, contact_from_session=file_year)
+        else:
+            for b in rec["bills"]:
+                b["url"] = house_bill_url(*b["id"].split(" ", 1), year=file_year)
         out[str(district)] = rec
     log(f"  House: {len(out)} matched, {len(waiting)} waiting for new-member records")
     info = {"matched": len(out), "waiting": waiting, "source": used}

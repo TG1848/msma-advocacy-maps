@@ -37,8 +37,8 @@
       ${L.office ? `<dt>Capitol office</dt><dd>${esc(L.office)}</dd>` : ''}
       ${L.phone ? `<dt>Phone</dt><dd><a href="tel:${esc(L.phone.replace(/[^0-9+]/g,''))}">${esc(L.phone)}</a></dd>` : ''}
       ${L.email ? `<dt>Email</dt><dd><a href="mailto:${esc(L.email)}">${esc(L.email)}</a></dd>` : ''}
-      <dt>Committees</dt><dd>${comm ? `<ul class="plain">${comm}</ul>` : '<span class="muted">Not yet assigned</span>'}</dd>
-      <dt>Bills filed (${(L.bills||[]).length})</dt><dd>${bills ? `<ul class="plain bills">${bills}${more}</ul>` : '<span class="muted">None filed yet</span>'}${L.cosponsored ? `<div class="muted" style="font-size:13px">Co-sponsor on ${L.cosponsored} other bill${L.cosponsored>1?'s':''}</div>` : ''}</dd>
+      <dt>Committees</dt><dd>${comm ? `<ul class="plain">${comm}</ul>` : `<span class="muted">${L.contact_from_session ? '2027 committee assignments are announced in January' : 'Not yet assigned'}</span>`}</dd>
+      <dt>Bills filed (${(L.bills||[]).length})</dt><dd>${bills ? `<ul class="plain bills">${bills}${more}</ul>` : `<span class="muted">${L.contact_from_session ? '2027 bills appear here once filing opens (prefiling starts Dec. 1)' : 'None filed yet'}</span>`}${L.cosponsored ? `<div class="muted" style="font-size:13px">Co-sponsor on ${L.cosponsored} other bill${L.cosponsored>1?'s':''}</div>` : ''}</dd>
     </dl>`;
   }
   function mapLink(k,id){ return `map.html#${k}-${id}`; }
