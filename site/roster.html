@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Member Roster · MSMA Advocacy Maps</title><meta name="description" content="See who represents you in the 2027 Missouri House and Senate: party, new or incumbent, leadership roles and the counties each district serves.">
+<link rel="icon" href="assets/msma-logo.png"><link rel="stylesheet" href="assets/site.css"></head><body>
+<header class="site-header"><div class="wrap"><a class="brand" href="index.html"><img src="assets/msma-logo.png" alt="Missouri State Medical Association"><span>MSMA Advocacy Maps<small>2027 MISSOURI GENERAL ASSEMBLY</small></span></a>
+<nav class="main" aria-label="Main"><a href="index.html">Home</a><a href="map.html">Interactive Map</a><a href="roster.html" class="active" aria-current="page">Member Roster</a><a href="leadership.html">Leadership</a><a href="committees.html">Committees</a></nav></div></header>
+<main><section class="block"><div class="wrap" style="max-width:1480px"><h2>Member roster</h2>
+<p class="lede">All 197 members of the 2027 Missouri General Assembly. Click a column to sort, or a name to see the district, Capitol office, committees and filed bills on the map.</p>
+<div class="filters">
+<div><label for="f-q">Search</label><input id="f-q" type="search" placeholder="Name, county or role"></div>
+<div><label for="f-ch">Chamber</label><select id="f-ch"><option value="">Both</option><option value="house">State House</option><option value="senate">State Senate</option></select></div>
+<div><label for="f-p">Party</label><select id="f-p"><option value="">All</option><option value="R">Republican</option><option value="D">Democrat</option></select></div>
+<div><label for="f-s">Status</label><select id="f-s"><option value="">All</option><option value="I">Incumbent (I)</option><option value="N">Newly elected (N)</option></select></div>
+<div><label for="f-c">Committee</label><select id="f-c"><option value="">All committees</option></select></div>
+<div><label for="f-l">Leadership</label><select id="f-l"><option value="">All members</option><option value="1">Leadership only</option></select></div>
+</div><p class="count" id="count"></p>
+<div class="tablewrap"><table class="data"><thead><tr><th data-k="k">Seat</th><th data-k="name">Name</th><th data-k="party">Party</th><th data-k="status">Status</th><th data-k="role">Leadership position</th><th data-k="counties">Counties served</th><th data-k="ncomm">Committees</th><th data-k="nbills">Bills filed</th><th>Contact</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div></section></main>
+<footer class="site-footer"><div class="wrap"><div class="grid g2"><div><strong>About MSMA</strong><br>The Missouri State Medical Association represents more than 4,000 physicians and physicians-in-training across Missouri and has been protecting the health of Missourians since 1850. MSMA Advocacy Maps helps the public see who represents them in the Missouri General Assembly.</div>
+<div><strong>Missouri State Medical Association</strong><br>113 Madison Street · P.O. Box 1028<br>Jefferson City, MO 65102<br>(573) 636-5151 · <a href="https://www.msma.org">msma.org</a><br>Advocacy questions: <a href="mailto:advocacy@msma.org">advocacy@msma.org</a></div></div>
+<p class="note">2026 election results are preliminary until certified by the Missouri Secretary of State. District counties are from the 2025–2026 Missouri Official Manual; district boundaries are the 2022 Missouri House and Senate plans. Independent educational resource, not an official State of Missouri website.<br><span id="liveStamp"></span></p></div></footer>
+<script src="assets/legislators.js"></script><script src="assets/site.js"></script><script>
+const {all,esc,COLOR,CH,PARTY,mapLink,liveFor,liveReady}=MSMA;const data=all();let sortKey='k',dir=1;
+const $=id=>document.getElementById(id);const params=new URLSearchParams(location.search);if(params.get('chamber'))$('f-ch').value=params.get('chamber');
+function draw(){for(const m of data){const L=liveFor(m.k,m.id);m.comms=L?(L.committees||[]).map(c=>c.name):[];m.ncomm=m.comms.length;m.nbills=L?(L.bills||[]).length:-1;m.L=L}const q=$('f-q').value.trim().toLowerCase(),ch=$('f-ch').value,p=$('f-p').value,s=$('f-s').value,l=$('f-l').value,cf=$('f-c').value;
+let rows=data.filter(m=>(!ch||m.k===ch)&&(!p||m.party===p)&&(!s||m.status===s)&&(!l||m.role)&&(!cf||m.comms.includes(cf))&&(!q||[m.name,m.role,m.counties,'district '+m.id,...m.comms].join(' ').toLowerCase().includes(q)));
+rows.sort((a,b)=>{let x=a[sortKey]??'',y=b[sortKey]??'';if(sortKey==='k'){x=a.k==='senate'?0:1;y=b.k==='senate'?0:1;if(x===y){x=a.id;y=b.id}}return (x>y?1:x<y?-1:0)*dir});
+$('count').textContent=`Showing ${rows.length} of ${data.length} members`;
+$('rows').innerHTML=rows.map(m=>`<tr><td style="white-space:nowrap">${m.k==='house'?'House':'Senate'} ${m.id}</td><td><span class="dot" style="background:${COLOR[m.party][m.status]}"></span><a href="${mapLink(m.k,m.id)}"><strong>${esc(m.name)}</strong></a></td><td>${PARTY[m.party]}</td><td>${m.status==='N'?'<span class="badge N">New (N)</span>':'<span class="badge I">Inc. (I)</span>'}</td><td>${m.role?'<span class="star">★</span> '+esc(m.role):''}</td><td>${esc(m.counties)}</td><td style="min-width:160px">${m.L?(m.comms.length?esc(m.comms.join('; ')):'<span class="muted">Not yet assigned</span>'):'<span class="muted">Coming in January</span>'}</td><td style="text-align:center">${m.nbills>=0?m.nbills:'<span class="muted">–</span>'}</td><td style="white-space:nowrap">${m.L&&m.L.phone?esc(m.L.phone)+'<br>':''}${m.L&&m.L.email?`<a href="mailto:${esc(m.L.email)}">Email</a> · `:''}<a href="${MSMA.contactLink(m.k,m.id)}" target="_blank" rel="noopener">Official page</a></td></tr>`).join('')}
+for(const id of ['f-q','f-ch','f-p','f-s','f-l','f-c'])$(id).addEventListener('input',draw);
+document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{const k=th.dataset.k;dir=sortKey===k?-dir:1;sortKey=k;draw()}));draw();liveReady.then(()=>{const names=new Set();for(const m of data){const L=liveFor(m.k,m.id);for(const c of (L&&L.committees)||[])names.add(c.name)}[...names].sort().forEach(n=>$('f-c').add(new Option(n,n)));if(!names.size){$('f-c').disabled=true;$('f-c').options[0].text='Available in January'}draw()});
+</script>
+</body></html>

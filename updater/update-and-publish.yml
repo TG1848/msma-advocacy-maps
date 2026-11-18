@@ -1,0 +1,70 @@
+# MSMA Advocacy Maps - nightly update + publish to GitHub Pages
+# (A copy of this file lives at .github/workflows/update-and-publish.yml - that copy is the one GitHub runs.)
+name: Update member info and publish site
+
+on:
+  schedule:
+    - cron: "17 10 * * *"   # every day around 4-5 AM Central (GitHub may run it a little late)
+  workflow_dispatch:        # adds a "Run workflow" button on the Actions tab
+  push:
+    branches: [main]        # republish whenever you change a file
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update-and-publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Excel library
+        run: pip install openpyxl
+
+      - name: Pull latest office, committee and bill information
+        id: update
+        if: github.event_name != 'push'
+        env:
+          OPENSTATES_API_KEY: ${{ secrets.OPENSTATES_API_KEY }}
+          SESSION_YEAR: "2027"
+        run: python updater/update_live.py
+
+      - name: Save changes (only if something changed)
+        if: github.event_name != 'push' && steps.update.outputs.changed == 'true'
+        run: |
+          git config user.name "msma-maps-bot"
+          git config user.email "advocacy@msma.org"
+          git add site/data/live.json site/assets/MSMA-Legislator-Contact-Directory-2027.xlsx
+          git commit -m "Nightly update: member offices, committees and bills"
+          git push
+
+      - name: Monthly heartbeat (keeps GitHub from pausing the nightly schedule)
+        if: github.event_name == 'schedule' && steps.update.outputs.changed != 'true'
+        run: |
+          if [ "$(date -u +%d)" = "01" ]; then
+            date -u +"%Y-%m-%d" > site/data/heartbeat.txt
+            git config user.name "msma-maps-bot"
+            git config user.email "advocacy@msma.org"
+            git add site/data/heartbeat.txt
+            git commit -m "Monthly heartbeat" && git push
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
