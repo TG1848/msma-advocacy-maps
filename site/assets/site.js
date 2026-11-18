@@ -41,6 +41,65 @@
       <dt>Bills filed (${(L.bills||[]).length})</dt><dd>${bills ? `<ul class="plain bills">${bills}${more}</ul>` : `<span class="muted">${L.contact_from_session ? '2027 bills appear here once filing opens (prefiling starts Dec. 1)' : 'None filed yet'}</span>`}${L.cosponsored ? `<div class="muted" style="font-size:13px">Co-sponsor on ${L.cosponsored} other bill${L.cosponsored>1?'s':''}</div>` : ''}</dd>
     </dl>`;
   }
+
+  // ---- Address lookup: U.S. Census geocoder (JSONP, free, no key) + district boundaries checked in the browser
+  let districtCache = null;
+  async function loadDistricts(){
+    if (districtCache) return districtCache;
+    if (window.GEO_DATA && window.GEO_DATA.house && window.GEO_DATA.senate) return districtCache = {house: window.GEO_DATA.house, senate: window.GEO_DATA.senate};
+    const [h, s] = await Promise.all(['geo-house.json', 'geo-senate.json'].map(f => fetch(f).then(r => { if (!r.ok) throw Error('Could not load district boundaries'); return r.json(); })));
+    return districtCache = {house: h.house, senate: s.senate};
+  }
+  function inRing(x, y, ring){
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++){
+      const [xi, yi] = ring[i], [xj, yj] = ring[j];
+      if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+    }
+    return inside;
+  }
+  function inGeometry(x, y, g){
+    const polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : [];
+    return polys.some(rings => inRing(x, y, rings[0]) && !rings.slice(1).some(h => inRing(x, y, h)));
+  }
+  async function districtsAt(lon, lat){
+    const D = await loadDistricts(), out = {};
+    for (const k of ['house', 'senate']){
+      const f = D[k].features.find(f => inGeometry(lon, lat, f.geometry));
+      out[k] = f ? String(f.properties.id ?? f.properties.district) : null;
+    }
+    return out;
+  }
+  function geocode(address){
+    return new Promise((resolve, reject) => {
+      const cb = '__msmaGeo' + Date.now() + Math.floor(Math.random() * 1e4);
+      const s = document.createElement('script');
+      const done = () => { delete window[cb]; s.remove(); clearTimeout(t); };
+      const t = setTimeout(() => { done(); reject(Error('The address service did not respond. Please try again in a moment.')); }, 20000);
+      window[cb] = data => {
+        done();
+        const m = (((data || {}).result || {}).addressMatches || [])[0];
+        if (!m) return reject(Error('We couldn\'t find that address. Check the spelling and include the city and ZIP code (for example: 113 Madison St, Jefferson City, MO 65101).'));
+        resolve({lon: m.coordinates.x, lat: m.coordinates.y, matched: m.matchedAddress});
+      };
+      s.onerror = () => { done(); reject(Error('The address service could not be reached. Please try again, or use your current location.')); };
+      s.src = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=jsonp&callback=' + cb + '&address=' + encodeURIComponent(address);
+      document.head.appendChild(s);
+    });
+  }
+  function currentPosition(){
+    return new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject(Error('This browser can\'t share your location. Please type your address instead.'));
+      navigator.geolocation.getCurrentPosition(p => resolve({lon: p.coords.longitude, lat: p.coords.latitude, matched: 'Your current location'}),
+        () => reject(Error('Location sharing was blocked or unavailable. Please type your address instead.')), {enableHighAccuracy: true, timeout: 15000});
+    });
+  }
+  async function lookup(where){
+    const loc = where === 'here' ? await currentPosition() : await geocode(where);
+    const d = await districtsAt(loc.lon, loc.lat);
+    if (!d.house && !d.senate) throw Error('That location is outside Missouri\'s legislative districts. Please check the address.');
+    return {...loc, ...d};
+  }
   function mapLink(k,id){ return `map.html#${k}-${id}`; }
   function badges(m){
     return `<span class="badge ${m.party}">${PARTY[m.party]}</span><span class="badge ${m.status}">${m.status==='N'?'Newly elected (N)':'Incumbent (I)'}</span>${m.role?`<span class="badge lead">★ ${esc(m.role)}</span>`:''}`;
@@ -59,5 +118,5 @@
       return m.counties.split(/,\s*/).some(c => {const k=countyKey(c); return k.startsWith(q) || (k+' county').startsWith(q) || (q.endsWith(' county') && k===q.replace(/ county$/,''));});
     }).sort((a,b)=> (a.k===b.k?0:a.k==='senate'?-1:1) || a.id-b.id);
   }
-  window.MSMA = {get LIVE(){return LIVE}, liveReady, liveFor, liveBlock, PENDING, contactLink, CH, TITLE, PARTY, COLOR, esc, all, mapLink, badges, personCard, search};
+  window.MSMA = {lookup, districtsAt, get LIVE(){return LIVE}, liveReady, liveFor, liveBlock, PENDING, contactLink, CH, TITLE, PARTY, COLOR, esc, all, mapLink, badges, personCard, search};
 })();

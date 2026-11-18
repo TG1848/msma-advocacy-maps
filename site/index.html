@@ -6,11 +6,20 @@
 <nav class="main" aria-label="Main"><a href="index.html" class="active" aria-current="page">Home</a><a href="map.html">Interactive Map</a><a href="roster.html">Member Roster</a><a href="leadership.html">Leadership</a><a href="committees.html">Committees</a></nav></div></header>
 <main><section class="hero"><div class="wrap"><h1>Who represents Missouri in 2027?</h1>
 <p>Explore every Missouri House and Senate district after the November 3, 2026 election: who won, their party, whether they're new or returning, who holds leadership roles, and which counties each district serves.</p>
-<a class="btn primary" href="map.html">Open the interactive map</a><a class="btn ghost" href="#contact">Get in touch with your legislators</a></div></section>
+<a class="btn primary" href="map.html">Open the interactive map</a><a class="btn ghost" href="#find">Find my legislators by address</a><a class="btn ghost" href="#contact">Get in touch with your legislators</a></div></section>
 
 <section class="block" id="find"><div class="wrap"><h2>Find your legislators</h2>
-<p class="lede">Type your county, a legislator's name, or a district number. Every Missourian has one state representative and one state senator.</p>
-<div class="search"><input id="q" type="search" placeholder="e.g. Boone, Greene County, Ingle, 134" aria-label="Search by county, name or district" autocomplete="off"></div>
+<p class="lede">Enter your home address to see exactly who represents you. Every Missourian has one state representative and one state senator.</p>
+<form id="addrForm" class="search" autocomplete="on" style="max-width:860px;flex-wrap:wrap">
+<input id="addr" type="text" name="street-address" autocomplete="street-address" placeholder="Street address, city, ZIP (e.g. 113 Madison St, Jefferson City, MO 65101)" aria-label="Your home address" style="min-width:280px">
+<button class="btn solid" type="submit" style="margin:0">Find my legislators</button>
+<button class="btn" type="button" id="here" style="margin:0;border-color:#b9c4d6;color:var(--navy)">Use my current location</button>
+</form>
+<p class="count" id="addrMsg" style="margin-top:10px" aria-live="polite"></p>
+<div id="mine" class="grid g2" style="margin-top:6px"></div>
+<p class="muted" style="font-size:13px;margin-top:10px">Your address is sent only to the U.S. Census Bureau's free geocoder to find its map location; MSMA Advocacy Maps doesn't store it. Districts are matched to the official 2022 Missouri House and Senate boundaries.</p>
+<h3 style="margin:30px 0 8px;color:var(--navy)">Or search by name, county or district number</h3>
+<div class="search"><input id="q" type="search" placeholder="e.g. Boone, Greene County, Ingle, 134" aria-label="Search by name, county or district" autocomplete="off"></div>
 <p id="hint" class="count" style="margin-top:12px"></p><div id="results" class="results"></div></div></section>
 
 <section class="block" id="contact" style="background:#fff"><div class="wrap"><h2>Get in touch with your legislators</h2>
@@ -51,10 +60,17 @@
 <div><strong>Missouri State Medical Association</strong><br>113 Madison Street · P.O. Box 1028<br>Jefferson City, MO 65102<br>(573) 636-5151 · <a href="https://www.msma.org">msma.org</a><br>Advocacy questions: <a href="mailto:advocacy@msma.org">advocacy@msma.org</a></div></div>
 <p class="note">2026 election results are preliminary until certified by the Missouri Secretary of State. District counties are from the 2025–2026 Missouri Official Manual; district boundaries are the 2022 Missouri House and Senate plans. Independent educational resource, not an official State of Missouri website.<br><span id="liveStamp"></span></p></div></footer>
 <script src="assets/legislators.js"></script><script src="assets/site.js"></script><script>
-const {search,personCard,all,esc}=MSMA;
+const {search,personCard,all,esc,lookup,liveBlock,liveReady,badges,mapLink,contactLink,TITLE,CH}=MSMA;
 const q=document.getElementById('q'),res=document.getElementById('results'),hint=document.getElementById('hint');
 function run(){const v=q.value;const r=search(v);hint.textContent=v.trim()?(r.length?`${r.length} legislator${r.length>1?'s':''} found. Click one to see the district on the map.`:'No matches. Try a county name like "Jackson" or a last name.'):'';res.innerHTML=r.slice(0,60).map(personCard).join('')}
 q.addEventListener('input',run);
+const msg=document.getElementById('addrMsg'),mine=document.getElementById('mine'),form=document.getElementById('addrForm');
+function memberCard(k,id){const m=LEG[k][id];if(!m)return '';return `<div class="card" style="border-left:8px solid ${m.party==='R'?'var(--rep)':'var(--dem)'}"><div class="muted" style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px">Your ${k==='house'?'state representative':'state senator'} · ${CH[k]} District ${id}</div><h3 style="font-size:24px;margin:4px 0">${TITLE[k]} ${esc(m.name)}</h3>${badges(m)}<dl class="kv" style="margin-top:12px"><dt>Counties served</dt><dd>${esc(m.counties)}</dd><dt>Official page</dt><dd><a href="${contactLink(k,id)}" target="_blank" rel="noopener">Contact office</a></dd></dl><div style="margin-top:12px">${liveBlock(k,id,{maxBills:5})}</div><p style="margin:14px 0 0"><a class="btn solid" style="margin:0" href="${mapLink(k,id)}">See district on the map</a></p></div>`}
+async function find(where){msg.textContent=where==='here'?'Finding your location…':'Looking up that address…';mine.innerHTML='';
+ try{const r=await lookup(where);await liveReady;msg.innerHTML=`Showing legislators for <strong>${esc(r.matched)}</strong>.`;mine.innerHTML=(r.senate?memberCard('senate',r.senate):'')+(r.house?memberCard('house',r.house):'');mine.scrollIntoView({behavior:'smooth',block:'nearest'})}
+ catch(e){msg.textContent=e.message}}
+form.addEventListener('submit',e=>{e.preventDefault();const v=document.getElementById('addr').value.trim();if(v)find(v);else msg.textContent='Please type your street address, city and ZIP code.'});
+document.getElementById('here').addEventListener('click',()=>find('here'));
 const g=document.getElementById('glance');
 for(const k of ['house','senate']){const ms=all().filter(m=>m.k===k),R=ms.filter(m=>m.party==='R').length,D=ms.filter(m=>m.party==='D').length,N=ms.filter(m=>m.status==='N').length,t=ms.length;
 g.insertAdjacentHTML('beforeend',`<div class="card"><h3>${k==='house'?'Missouri House':'Missouri Senate'} · ${t} seats</h3><div class="bar"><i style="width:${R/t*100}%;background:var(--rep)"></i><i style="width:${D/t*100}%;background:var(--dem)"></i></div><div class="grid g3" style="margin-top:12px"><div class="stat"><b class="r">${R}</b><span>Republicans</span></div><div class="stat"><b class="d">${D}</b><span>Democrats</span></div><div class="stat"><b>${N}</b><span>Newly elected</span></div></div><p style="margin:12px 0 0"><a href="roster.html?chamber=${k}">See all ${k==='house'?'representatives':'senators'} →</a></p></div>`)}
