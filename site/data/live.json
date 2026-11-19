@@ -4,7 +4,7 @@
   "1": {
    "official_name": "Jeff Farnan",
    "district": "001",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 410-A, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 313-3, Jefferson City MO 65101",
    "phone": "573-751-9465",
    "email": "Jeff.Farnan@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2354",
@@ -225,7 +225,7 @@
   "39": {
    "official_name": "Mark Meirath",
    "district": "039",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 116-5, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 304-B, Jefferson City MO 65101",
    "phone": "573-751-1468",
    "email": "Mark.Meirath@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2490",
@@ -966,7 +966,7 @@
   "126": {
    "official_name": "Jim Kalberloh",
    "district": "126",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 410-B, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 314, Jefferson City MO 65101",
    "phone": "573-751-5388",
    "email": "Jim.Kalberloh@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2229",
@@ -1303,6 +1303,6 @@
   }
  },
  "senate": {},
- "updated": "2026-11-18T15:17:20+00:00",
- "updated_display": "Nov 18, 2026"
+ "updated": "2026-11-19T11:10:19+00:00",
+ "updated_display": "Nov 19, 2026"
 }
