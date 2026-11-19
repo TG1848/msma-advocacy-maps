@@ -46,9 +46,9 @@
   let districtCache = null;
   async function loadDistricts(){
     if (districtCache) return districtCache;
-    if (window.GEO_DATA && window.GEO_DATA.house && window.GEO_DATA.senate) return districtCache = {house: window.GEO_DATA.house, senate: window.GEO_DATA.senate};
-    const [h, s] = await Promise.all(['geo-house.json', 'geo-senate.json'].map(f => fetch(f).then(r => { if (!r.ok) throw Error('Could not load district boundaries'); return r.json(); })));
-    return districtCache = {house: h.house, senate: s.senate};
+    if (window.GEO_DATA && window.GEO_DATA.house && window.GEO_DATA.senate && window.GEO_DATA.county) return districtCache = {house: window.GEO_DATA.house, senate: window.GEO_DATA.senate, county: window.GEO_DATA.county};
+    const [h, s, c] = await Promise.all(['geo-house.json', 'geo-senate.json', 'geo-county.json'].map(f => fetch(f).then(r => { if (!r.ok) throw Error('Could not load district boundaries'); return r.json(); })));
+    return districtCache = {house: h.house, senate: s.senate, county: c.county};
   }
   function inRing(x, y, ring){
     let inside = false;
@@ -68,6 +68,9 @@
       const f = D[k].features.find(f => inGeometry(lon, lat, f.geometry));
       out[k] = f ? String(f.properties.id ?? f.properties.district) : null;
     }
+    const cf = D.county.features.find(f => inGeometry(lon, lat, f.geometry));
+    out.county = cf ? cf.properties.name : null;
+    out.council = cf && window.MSMA_ORG ? (window.MSMA_ORG.countyToCouncil[cf.properties.name] || null) : null;
     return out;
   }
   function geocode(address){

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MSMA Leadership · MSMA Advocacy Maps</title><meta name="description" content="See who represents you in the 2027 Missouri House and Senate: party, new or incumbent, leadership roles and the counties each district serves.">
+<link rel="icon" href="assets/msma-logo.png"><link rel="stylesheet" href="assets/site.css"></head><body>
+<header class="site-header"><div class="wrap"><a class="brand" href="index.html"><img src="assets/msma-logo.png" alt="Missouri State Medical Association"><span>MSMA Advocacy Maps<small>2027 MISSOURI GENERAL ASSEMBLY</small></span></a>
+<nav class="main" aria-label="Main"><a href="index.html">Home</a><a href="map.html">Interactive Map</a><a href="roster.html">Member Roster</a><a href="leadership.html">Legislative Leaders</a><a href="committees.html">Committees</a><a href="msma.html" class="active" aria-current="page">MSMA Leadership</a></nav></div></header>
+<main><section class="block"><div class="wrap"><h2>MSMA leadership</h2>
+<p class="lede">Missouri State Medical Association officers, Council, sections and AMA delegation for 2026-27. Source: MSMA Directory, updated <span id="upd"></span>.</p>
+<h3 class="sec">Officers</h3><div id="officers" class="grid g3"></div>
+<h3 class="sec">Council by district</h3><p class="muted" style="margin-top:-4px">Click a district to see its counties and state legislators on the <a href="map.html#council-1">map</a>.</p><div id="council" class="grid g2"></div>
+<h3 class="sec">Section councilors</h3><div class="tablewrap"><table class="data"><thead><tr><th>Section</th><th>Councilor</th><th>Vice councilor</th></tr></thead><tbody id="sections"></tbody></table></div>
+<h3 class="sec">AMA delegation</h3><div class="grid g2"><div class="card"><h3>Delegates</h3><ul class="plain" id="amaD"></ul></div><div class="card"><h3>Alternate delegates</h3><ul class="plain" id="amaA"></ul></div></div>
+<h3 class="sec">Also serving</h3><div id="other" class="grid g3"></div>
+<h3 class="sec">MSMA staff</h3><div class="card"><p style="margin:0 0 8px">Missouri State Medical Association · 113 Madison Street, Jefferson City, MO 65101 · (573) 636-5151</p><ul class="plain" id="staff"></ul></div>
+</div></section></main>
+<footer class="site-footer"><div class="wrap"><div class="grid g2"><div><strong>About MSMA</strong><br>The Missouri State Medical Association represents more than 4,000 physicians and physicians-in-training across Missouri and has been protecting the health of Missourians since 1850. MSMA Advocacy Maps helps the public see who represents them in the Missouri General Assembly.</div>
+<div><strong>Missouri State Medical Association</strong><br>113 Madison Street · P.O. Box 1028<br>Jefferson City, MO 65102<br>(573) 636-5151 · <a href="https://www.msma.org">msma.org</a><br>Advocacy questions: <a href="mailto:advocacy@msma.org">advocacy@msma.org</a></div></div>
+<p class="note">2026 election results are preliminary until certified by the Missouri Secretary of State. District counties are from the 2025–2026 Missouri Official Manual; district boundaries are the 2022 Missouri House and Senate plans. Independent educational resource, not an official State of Missouri website.<br><span id="liveStamp"></span></p></div></footer>
+<script src="assets/legislators.js"></script><script src="assets/council.js"></script><script src="assets/site.js"></script><script>
+const O=window.MSMA_ORG,{esc,COLOR}=MSMA;document.getElementById('upd').textContent=O.updated;
+const sub=x=>esc([x.specialty,x.city].filter(Boolean).join(' · '));
+const li=x=>`<li><strong>${esc(x.name)}</strong>${x.role?` <span class="pos">${esc(x.role)}</span>`:''}<div class="muted" style="font-size:13px">${sub(x)}${x.term?' · Term '+esc(x.term):''}</div></li>`;
+document.getElementById('officers').innerHTML=O.officers.map(o=>`<div class="card"><div class="role" style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--msma-red)">${esc(o.role)}</div><div style="font-size:19px;font-weight:700">${esc(o.name)}</div><div class="muted">${sub(o)}</div></div>`).join('');
+document.getElementById('council').innerHTML=Object.entries(O.council).map(([d,c])=>`<div class="card" style="border-left:8px solid ${O.colors[d]}"><div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h3 style="color:var(--navy);margin:0">District ${d}</h3><a href="map.html#council-${d}">View on map →</a></div>
+<div class="muted" style="font-size:13px;margin:4px 0 8px">${(O.societies[d]||[]).map(s=>esc(s[0])).join(' · ')} · ${(O.counties[d]||[]).length} counties</div>
+<div style="font-size:12px;font-weight:800;text-transform:uppercase;color:var(--muted)">Councilor${c.councilors.length>1?'s':''}</div><ul class="plain">${c.councilors.map(li).join('')}</ul>
+<div style="font-size:12px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-top:8px">Vice councilor</div><ul class="plain">${c.vice.length?c.vice.map(li).join(''):'<li class="muted">Vacant</li>'}</ul></div>`).join('');
+const cell=x=>x?`<strong>${esc(x.name)}</strong><div class="muted" style="font-size:13px">${sub(x)}${x.term?' · Term '+esc(x.term):''}</div>`:'<span class="muted">Vacant</span>';
+document.getElementById('sections').innerHTML=O.sections.map(s=>`<tr><td><strong>${esc(s.section)}</strong></td><td>${cell(s.councilor)}</td><td>${cell(s.vice)}</td></tr>`).join('');
+const ama=x=>`<li><strong>${esc(x.name)}</strong><div class="muted" style="font-size:13px">${esc(x.specialty)} · Term ${esc(x.term)}</div></li>`;
+document.getElementById('amaD').innerHTML=O.ama.delegates.map(ama).join('');document.getElementById('amaA').innerHTML=O.ama.alternates.map(ama).join('');
+document.getElementById('other').innerHTML=O.other.map(o=>`<div class="card"><div style="font-size:12px;font-weight:800;text-transform:uppercase;color:var(--msma-red)">${esc(o.role)}</div><div style="font-size:18px;font-weight:700">${esc(o.name)}</div><div class="muted">${sub(o)}</div></div>`).join('');
+document.getElementById('staff').innerHTML=O.staff.map(s=>`<li><strong>${esc(s.name)}</strong>, ${esc(s.title)} · <a href="mailto:${esc(s.email)}">${esc(s.email)}</a></li>`).join('');
+</script>
+</body></html>

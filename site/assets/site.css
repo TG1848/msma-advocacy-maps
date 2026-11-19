@@ -88,3 +88,5 @@ ul.plain{list-style:none;margin:0;padding:0}ul.plain li{padding:3px 0}ul.bills l
 .comm-card h3{font-size:17px;color:var(--navy);margin-bottom:8px}.comm-card li{font-size:14px;padding:4px 0;border-bottom:1px solid var(--line)}.comm-card li:last-child{border-bottom:0}
 .tabs{display:flex;gap:8px;margin:0 0 18px}.tabs button{font:inherit;font-weight:700;padding:9px 16px;border-radius:8px;border:1px solid #b9c4d6;background:#fff;cursor:pointer}.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 @media(max-width:600px){dl.kv{grid-template-columns:1fr}}
+
+h3.sec{color:var(--navy);font-size:22px;margin:34px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--line)}

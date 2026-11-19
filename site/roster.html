@@ -3,7 +3,7 @@
 <title>Member Roster · MSMA Advocacy Maps</title><meta name="description" content="See who represents you in the 2027 Missouri House and Senate: party, new or incumbent, leadership roles and the counties each district serves.">
 <link rel="icon" href="assets/msma-logo.png"><link rel="stylesheet" href="assets/site.css"></head><body>
 <header class="site-header"><div class="wrap"><a class="brand" href="index.html"><img src="assets/msma-logo.png" alt="Missouri State Medical Association"><span>MSMA Advocacy Maps<small>2027 MISSOURI GENERAL ASSEMBLY</small></span></a>
-<nav class="main" aria-label="Main"><a href="index.html">Home</a><a href="map.html">Interactive Map</a><a href="roster.html" class="active" aria-current="page">Member Roster</a><a href="leadership.html">Leadership</a><a href="committees.html">Committees</a></nav></div></header>
+<nav class="main" aria-label="Main"><a href="index.html">Home</a><a href="map.html">Interactive Map</a><a href="roster.html" class="active" aria-current="page">Member Roster</a><a href="leadership.html">Legislative Leaders</a><a href="committees.html">Committees</a><a href="msma.html">MSMA Leadership</a></nav></div></header>
 <main><section class="block"><div class="wrap" style="max-width:1480px"><h2>Member roster</h2>
 <p class="lede">All 197 members of the 2027 Missouri General Assembly. Click a column to sort, or a name to see the district, Capitol office, committees and filed bills on the map.</p>
 <div class="filters">
@@ -19,7 +19,7 @@
 <footer class="site-footer"><div class="wrap"><div class="grid g2"><div><strong>About MSMA</strong><br>The Missouri State Medical Association represents more than 4,000 physicians and physicians-in-training across Missouri and has been protecting the health of Missourians since 1850. MSMA Advocacy Maps helps the public see who represents them in the Missouri General Assembly.</div>
 <div><strong>Missouri State Medical Association</strong><br>113 Madison Street · P.O. Box 1028<br>Jefferson City, MO 65102<br>(573) 636-5151 · <a href="https://www.msma.org">msma.org</a><br>Advocacy questions: <a href="mailto:advocacy@msma.org">advocacy@msma.org</a></div></div>
 <p class="note">2026 election results are preliminary until certified by the Missouri Secretary of State. District counties are from the 2025–2026 Missouri Official Manual; district boundaries are the 2022 Missouri House and Senate plans. Independent educational resource, not an official State of Missouri website.<br><span id="liveStamp"></span></p></div></footer>
-<script src="assets/legislators.js"></script><script src="assets/site.js"></script><script>
+<script src="assets/legislators.js"></script><script src="assets/council.js"></script><script src="assets/site.js"></script><script>
 const {all,esc,COLOR,CH,PARTY,mapLink,liveFor,liveReady}=MSMA;const data=all();let sortKey='k',dir=1;
 const $=id=>document.getElementById(id);const params=new URLSearchParams(location.search);if(params.get('chamber'))$('f-ch').value=params.get('chamber');
 function draw(){for(const m of data){const L=liveFor(m.k,m.id);m.comms=L?(L.committees||[]).map(c=>c.name):[];m.ncomm=m.comms.length;m.nbills=L?(L.bills||[]).length:-1;m.L=L}const q=$('f-q').value.trim().toLowerCase(),ch=$('f-ch').value,p=$('f-p').value,s=$('f-s').value,l=$('f-l').value,cf=$('f-c').value;
