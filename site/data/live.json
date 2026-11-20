@@ -394,7 +394,7 @@
   "55": {
    "official_name": "Bill Irwin",
    "district": "055",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 118-CB, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 411-2, Jefferson City MO 65101",
    "phone": "573-751-3783",
    "email": "Bill.Irwin@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2495",
@@ -823,7 +823,7 @@
   "108": {
    "official_name": "Mike Costlow",
    "district": "108",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 115-J, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 200-B, Jefferson City MO 65101",
    "phone": "573-751-3572",
    "email": "Mike.Costlow@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2514",
@@ -940,7 +940,7 @@
   "123": {
    "official_name": "Jeff Vernetti",
    "district": "123",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 409-B, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 313-1, Jefferson City MO 65101",
    "phone": "573-751-1119",
    "email": "Jeff.Vernetti@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2519",
@@ -1070,7 +1070,7 @@
   "137": {
    "official_name": "Darin Chappell",
    "district": "137",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 200-B, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 302, Jefferson City MO 65101",
    "phone": "573-751-3819",
    "email": "Darin.Chappell@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2362",
@@ -1226,7 +1226,7 @@
   "154": {
    "official_name": "Lisa Durnell",
    "district": "154",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 115-C, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 415-B, Jefferson City MO 65101",
    "phone": "573-751-1455",
    "email": "Lisa.Durnell@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2529",
@@ -1303,6 +1303,6 @@
   }
  },
  "senate": {},
- "updated": "2026-11-19T11:10:19+00:00",
- "updated_display": "Nov 19, 2026"
+ "updated": "2026-11-20T11:12:51+00:00",
+ "updated_display": "Nov 20, 2026"
 }
