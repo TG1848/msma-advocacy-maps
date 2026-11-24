@@ -56,7 +56,7 @@
   "15": {
    "official_name": "Ken Jamison",
    "district": "015",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 101-G, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 116-4, Jefferson City MO 65101",
    "phone": "573-751-4787",
    "email": "Ken.Jamison@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2479",
@@ -186,7 +186,7 @@
   "34": {
    "official_name": "Kemp Strickler",
    "district": "034",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 101-I, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 109-C, Jefferson City MO 65101",
    "phone": "573-751-1456",
    "email": "Kemp.Strickler@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2358",
@@ -212,7 +212,7 @@
   "38": {
    "official_name": "Martin Jacobs",
    "district": "038",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 101-H, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 116-5, Jefferson City MO 65101",
    "phone": "573-751-2238",
    "email": "Martin.Jacobs@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2489",
@@ -511,7 +511,7 @@
   "69": {
    "official_name": "Scott Miller",
    "district": "069",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 115-E, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 312, Jefferson City MO 65101",
    "phone": "573-751-5365",
    "email": "Scott.Miller@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2499",
@@ -680,7 +680,7 @@
   "87": {
    "official_name": "Connie Steinmetz",
    "district": "087",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 135-BC, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 115-C, Jefferson City MO 65101",
    "phone": "573-751-0100",
    "email": "Connie.Steinmetz@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2508",
@@ -771,7 +771,7 @@
   "98": {
    "official_name": "Jaclyn Zimmermann",
    "district": "098",
-   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 109-G, Jefferson City MO 65101",
+   "office": "MO House of Representatives, 201 West Capitol Avenue, Room 101-I, Jefferson City MO 65101",
    "phone": "573-751-4392",
    "email": "Jaclyn.Zimmermann@house.mo.gov",
    "photo": "https://images.house.mo.gov/MemberPhoto.aspx?id=2510",
@@ -1303,6 +1303,6 @@
   }
  },
  "senate": {},
- "updated": "2026-11-20T11:12:51+00:00",
- "updated_display": "Nov 20, 2026"
+ "updated": "2026-11-24T11:02:47+00:00",
+ "updated_display": "Nov 24, 2026"
 }
